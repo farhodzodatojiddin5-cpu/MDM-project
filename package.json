@@ -1,18 +1,67 @@
 {
-  "name": "mdm-project",
+  "name": "mdm-console-backend",
   "version": "1.0.0",
-  "private": true,
+  "description": "Mobile Device Management System — Node.js/Express/MongoDB API",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node seed.js"
   },
   "dependencies": {
-    "axios": "^1.6.4",
-    "express": "^4.18.4",
-    "mongoose": "^7.3.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "socket.io": "^4.7.2",
-    "socket.io-client": "^4.7.2"
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.1",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }
+
+// ──────────────────────────────────────────────────────────────
+// .env.example  (copy to .env and fill in your values)
+// ──────────────────────────────────────────────────────────────
+/*
+PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/mdm_console
+JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
+JWT_EXPIRES=8h
+CLIENT_URL=http://localhost:3000
+*/
+
+// ──────────────────────────────────────────────────────────────
+// seed.js — Seed demo data into MongoDB
+// ──────────────────────────────────────────────────────────────
+/*
+const mongoose = require('mongoose');
+const { User, Device } = require('./models');
+require('dotenv').config();
+
+async function seed() {
+  await mongoose.connect(process.env.MONGO_URI);
+
+  await User.deleteMany({});
+  await Device.deleteMany({});
+
+  await User.create([
+    { name: 'Alex Chen', email: 'admin@company.com', password: 'admin123', role: 'super_admin' },
+    { name: 'Sam Rivera', email: 'it@company.com',    password: 'it1234',   role: 'it_manager'  },
+  ]);
+
+  await Device.create([
+    { deviceId:'DEV-001', name:'iPhone 14 Pro', type:'iOS',     os:'iOS 17.2',       assignedUser:'alice@co.com', status:'online',  compliance:'pass', battery:87, ipAddress:'10.0.1.45' },
+    { deviceId:'DEV-002', name:'Pixel 8',       type:'Android', os:'Android 14',     assignedUser:'bob@co.com',   status:'online',  compliance:'pass', battery:64, ipAddress:'10.0.1.62' },
+    { deviceId:'DEV-003', name:'Surface Pro 9', type:'Windows', os:'Win 11 23H2',    assignedUser:'carol@co.com', status:'offline', compliance:'warn', battery:22, ipAddress:'10.0.2.10' },
+    { deviceId:'DEV-005', name:'Galaxy S23',    type:'Android', os:'Android 13',     assignedUser:'eve@co.com',   status:'risk',    compliance:'fail', battery:12, ipAddress:'10.0.3.5', isJailbroken:true },
+  ]);
+
+  console.log('✅ Seed complete!');
+  process.exit(0);
+}
+seed();
+*/
